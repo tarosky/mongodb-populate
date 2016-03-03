@@ -1,0 +1,62 @@
+#!/usr/bin/env node
+
+//
+// Usage:
+//
+// $ mongodb-populate --uri mongodb://localhost/db1 --clear collection1,collection2 import/collection1.js import/collection2.js
+//
+
+var path = require('path');
+var argv = require('minimist')(process.argv.slice(2));
+var mongodb = require('mongodb');
+
+global.ObjectId = mongodb.ObjectID.createFromHexString;
+global.NumberLong = mongodb.Long.fromString;
+global.ISODate = function(d) {
+  return new Date(d);
+};
+
+var getConnectionAsync = function() {
+  return mongodb.MongoClient.connect(argv.uri);
+};
+
+var doMongoTasks = function(tasks) {
+  return tasks.reduce(function(promise, task) {
+    return promise.then(function(db) {
+      return task(db).then(function() {
+        return db;
+      }, function(e) {
+        console.error(e);
+      });
+    }, function(e) {
+      console.error(e);
+    });
+  }, getConnectionAsync().then(function(db) {
+    return db;
+  }, function(e) {
+    console.error(e);
+  })).then(function(db) {
+    return db.close();
+  }, function(e) {
+    console.error(e);
+  });
+};
+
+var removes = (argv.clear ? argv.clear.split(',') : []).map(function(c) {
+  return function(db) {
+    return db.collection(c).deleteMany({});
+  };
+});
+
+var inserts = argv._.map(function(arg) {
+  var res = require(path.resolve(arg));
+  return function(db) {
+    var bulk = db.collection(res.name).initializeUnorderedBulkOp();
+    res.data.map(function(d) {
+      bulk.insert(d);
+    });
+    return bulk.execute();
+  };
+});
+
+doMongoTasks(removes.concat(inserts));

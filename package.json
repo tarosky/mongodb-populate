@@ -1,0 +1,21 @@
+{
+  "name": "mongodb-populate",
+  "version": "0.1.0",
+  "description": "Clear and Import test data into MongoDB.",
+  "author": "Akihiro HARAI <akihiro.harai@tarosky.co.jp>",
+  "contributors": [],
+  "bin": {
+    "module-name": "bin/mongodb-populate"
+  },
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tarosky/mongodb-populate"
+  },
+  "dependencies": {
+    "minimist": "^1.2.0",
+    "mongodb": "^2.0.11"
+  },
+  "devDependencies": {},
+  "license": "MIT"
+}
