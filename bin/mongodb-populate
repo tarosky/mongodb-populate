@@ -44,7 +44,7 @@ var doMongoTasks = function(tasks) {
 
 var removes = (argv.clear ? argv.clear.split(',') : []).map(function(c) {
   return function(db) {
-    return db.collection(c).deleteMany({});
+    return db.collection(c).drop();
   };
 });
 
