@@ -44,7 +44,13 @@ var doMongoTasks = function(tasks) {
 
 var removes = (argv.clear ? argv.clear.split(',') : []).map(function(c) {
   return function(db) {
-    return db.collection(c).dropIndexes().then(db.collection(c).deleteMany({}));
+    return db.collection(c).dropIndexes().catch(function(e) {
+      if (e.errmsg === 'ns not found') {
+        return;
+      } else {
+        console.error(e);
+      }
+    }).then(db.collection(c).deleteMany({}));
   };
 });
 
