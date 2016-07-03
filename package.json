@@ -1,6 +1,6 @@
 {
   "name": "mongodb-populate",
-  "version": "0.4.2",
+  "version": "0.4.3",
   "description": "Clear and Import test data into MongoDB.",
   "author": "Akihiro HARAI <akihiro.harai@tarosky.co.jp>",
   "contributors": [],
